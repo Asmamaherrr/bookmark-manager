@@ -1,0 +1,372 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background-color: rgba(212, 204, 194, 0.5);
+}
+header nav {
+    margin: auto;
+    padding: 10px 30px;
+    display: flex;
+    justify-content: space-between;
+}
+header nav .bars{
+    display: none;
+}
+header nav .bars i{
+    font-size: 20px;
+    color: rgb(3, 3, 3);
+    padding: 20px 10px;
+}
+header nav .logo{
+    font-size: 2.5rem;
+    color: #969594;
+    padding: 10px 30px;
+    cursor: pointer;
+}
+header nav .logo span{
+    color: rgb(8, 8, 8);
+}
+header nav ul{
+    display: flex;
+    list-style-type: none;
+}
+header nav ul li{
+    padding: 20px 15px;
+    margin: 5px 5px;
+    font-size: 20px;
+    & a{
+        text-decoration: none;
+        color: black;
+        transition: all 0.5s;
+        font-weight: 500;
+        &:hover{
+            color: rgb(170, 163, 156);
+        }
+    }
+}
+.getstarted{
+    cursor: pointer;
+    color: #000000;
+    font-size: 15px;
+    text-align: center;
+    padding: 0px 5px;
+    transition: all 0.5s;
+    height: 50px;
+    margin-top: 10px;
+    border-radius: 20%;
+    border-width: 1px;
+}
+.getstarted:hover{
+    background-color: rgb(158, 154, 150);
+    color: rgb(14, 13, 13);
+    border-color: rgb(170, 163, 156);
+}
+#sec1 .cont{
+    width: 100%;
+    display: flex;
+}
+#sec1 .cont img{
+    width: 50%;
+    height: 70vh;
+    margin-top: 35px;
+    animation-name: aura;
+    animation-duration: 5s;
+    animation-delay: 2s;
+    animation-iteration-count: infinite;
+}
+#sec1 .cont h1{
+    margin-top: 20%;
+    margin-left: 30px;
+    font-size: 35px;
+}
+#sec1 .cont p{
+    margin: 5% 5%;
+    font-size: 20px;
+}
+#sec1 .cont .start{
+    cursor: pointer;
+    color: #000000;
+    font-size: 15px;
+    text-align: center;
+    padding: 0px 20px;
+    transition: all 0.5s;
+    height: 50px;
+    margin-top: 10px;
+    margin-left: 35px;
+    border-radius: 20%;
+    border-width: 1px;
+    box-shadow: 0px 2px 15px 1px rgba(87, 88, 87, 0.5);
+}
+#sec1 .cont .start:hover{
+    background-color: rgb(158, 154, 150);
+    color: rgb(14, 13, 13);
+    border-color: rgb(170, 163, 156);
+    box-shadow: 0px 2px 15px 1px rgba(0, 0, 0, 0.5);
+}
+#sec2 .cont{
+    width: 100%;
+    display: flex; 
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.card{
+    margin: auto;
+    margin-top: 70px;
+    flex: 1 1 calc(50% - 20px);
+    max-width: 400px;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #bebdbb;
+}
+.card:hover{
+    border: 1px solid #020202;
+}
+.card .log i{
+    font-size: 25px;
+    padding-bottom: 5px;
+}
+#sec3 .cont{
+    width: 100%;
+    display: flex;
+    margin-top: 50px;
+}
+#sec3 .cont .who{
+    width: 50%;
+}
+#sec3 .cont .who h2{
+    margin: 50px 0px 10px 20px;
+}
+
+#sec3 .cont .who p{
+    font-size: 20px;
+    margin: 0px 20px 0px 20px;
+}
+#sec3 .cont img{
+    border-radius: 10%;
+    width: 50%;
+}
+#sec4 .cont{
+    width: 90%;
+    background-color: rgba(179, 178, 177, 0.5);
+    margin: auto;
+}
+#sec4 .cont .srv h2{
+    text-align: center;
+    margin: 30px;
+    padding-top: 30px;
+}
+#sec4 .cont .fl{
+    display: flex;
+    margin: auto;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+#sec4 .cont .tic{
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: rgb(228, 220, 212);
+    width: calc(100% /4);
+    margin: auto;
+    margin-bottom: 30px;
+    text-align: center;
+}
+#sec4 .cont .tic .lg{
+    font-size: 20px;
+    padding: 20px;
+}
+#sec4 .cont .tic a{
+    color: #000000;
+    text-decoration: none;
+    font-weight: bold;
+}
+#sec4 .cont .tic a:hover{
+    color: #969594;
+}
+#sec4 .cont .serv h2{
+    text-align: center;
+    margin-bottom: 20px;
+}
+#sec4 .cont .serv p{
+    font-size: 20px;
+    margin: 0px 30px;
+    text-align: center;
+    padding-bottom: 40px;
+}
+.serv h2{
+    margin-top: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.serv p{
+    font-size: 20px;
+    margin: 0px 30px;
+    text-align: center;
+    padding-bottom: 40px;
+}
+#sec5{
+    display: flex;
+}
+#sec5 .cu{
+    width: 50%;
+    background-color: rgba(179, 178, 177, 0.5);
+    border-top: #969594 solid;
+    border-bottom: #969594 solid;
+    margin-left: 50px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+#sec5 .cu form{
+    width: 100%;
+}
+#sec5 .cu form .top{
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+#sec5 .cu form .top label{
+    width: 100%;
+    margin-left: 50px;
+}
+#sec5 .cu form .top .cdl1{
+    width: 250px;
+    margin-left: 50px;
+    height: 30px;
+}
+#sec5 .cu form .top .cdl2{
+    width: 250px;
+    margin-left: 50px;
+    height: 30px;
+}
+#sec5 .cu form .middle label{
+    width: 100%;
+    margin-left: 50px;
+}
+#sec5 .cu form .middle input{
+    width: 83%;
+    margin-left: 50px;
+    margin-bottom: 30px;
+    height: 30px;
+}
+#sec5 .cu form .bottom label{
+    width: 100%;
+    margin-left: 50px;
+}
+#sec5 .cu form .bottom textarea{
+    width: 83%;
+    margin-left: 50px;
+}
+#sec5 .cu form button{
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 0px solid black;
+    margin: 40px 50px;
+}
+#sec5 .cu form button:hover{
+    cursor: pointer;
+    background-color: #969594;
+}
+#sec5 .map{
+    width: 40%;
+    margin: auto;
+    background-color: rgba(179, 178, 177, 0.5);
+    border-top: #969594 solid;
+    border-bottom: #969594 solid;
+    height: 659px;
+}
+#sec5 .map .mp{
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+}
+#sec6 {
+    width: 100%;
+    background-color: rgba(179, 178, 177, 0.5);
+    margin: auto;
+    margin-top: 30px;
+    height: 300px;
+    text-align: center;
+    font-size: large;
+}
+#sec6 h2{
+    padding: 40px;
+}
+#sec6 i{
+    font-size: 25px;
+    padding: 10px;
+}
+#sec6 i:hover{
+    color: #969594;
+    cursor: pointer;
+}
+@keyframes aura{
+    25%{
+        transform: translateY(20px);
+    }
+    50%{
+        transform: translateY(-20px);
+    }
+    75%{
+        transform: translateY(20px);
+    }
+}
+
+@media(max-width: 991px){
+    header nav ul li{
+        font-size: 15px;
+    }
+}
+
+@media(max-width: 776px){
+    header nav .bars{
+        display: block;
+    }
+    header nav ul{
+        display: none;
+    }
+    .getstarted{
+        display: none;
+    }
+    #sec1 .cont{
+        display: block;
+    }
+    #sec1 .cont img{
+        width: 100%;
+    }
+    #sec3 .cont{
+        display: block;
+    }
+    #sec3 .cont .who{
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    #sec3 .cont img{
+        width: 100%;
+    }
+    #sec4 .cont .tic{
+        width: calc(100% /3);
+    }
+    #sec4 .cont .tic a{
+        font-size: 15px;
+    }
+    #sec5{
+        display: block;
+    }
+    #sec5 .cu{
+        width: 90%;
+        margin: auto;
+    }
+    #sec5 .map{
+        width: 90%;
+        margin: auto;
+        margin-top: 20px;
+    }
+}
+@media(max-width: 567px){
+    #sec4 .cont .tic{
+        width: calc(100% /2);
+    }
+}
