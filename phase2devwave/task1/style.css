@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            beh
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+        }
+        .design-card-1 {
+            background: #F5E6D3;
+        }
+        
+        .design-card-2 {
+            background: #E8F4F8;
+        }
+        
+        .design-card-3 {
+            background: #F0F0F0;
+        }
+        
+        .design-card-4 {
+            background: #2d2d2dff;
+        }
+        .hero-image {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+        }
