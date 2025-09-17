@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Sidebar from "./components/Sidebar"
 import NotesGrid from "./components/NotesGrid"
 import CreateNoteForm from "./components/CreateNoteForm"
@@ -17,8 +17,33 @@ function App() {
   const [showSignupForm, setShowSignupForm] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [editingNote, setEditingNote] = useState(null)
+  const [theme, setTheme] = useState("light") // Default to light theme
   
   const { notes, addNote, toggleFavorite, updateNote, deleteNote } = useNotes()
+
+  // Load theme from localStorage on component mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme")
+    if (savedTheme) {
+      setTheme(savedTheme)
+      document.documentElement.setAttribute("data-theme", savedTheme)
+    } else {
+      // Check for system preference
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+      if (prefersDark) {
+        setTheme("dark")
+        document.documentElement.setAttribute("data-theme", "dark")
+      }
+    }
+  }, [])
+
+  // Update theme and save to localStorage
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light"
+    setTheme(newTheme)
+    localStorage.setItem("theme", newTheme)
+    document.documentElement.setAttribute("data-theme", newTheme)
+  }
 
   const handleCreateNote = (noteData) => {
     addNote(noteData)
@@ -61,42 +86,46 @@ function App() {
   }
 
   return (
-    <div className="flex h-screen bg-white text-black font-body">
-      <Sidebar
-        currentView={currentView}
-        onViewChange={setCurrentView}
-        onCreateNote={() => setShowCreateForm(true)}
-        onLogin={() => setShowLoginForm(true)}
-        onSignup={() => setShowSignupForm(true)}
-      />
+    <div className="app-container" data-theme={theme}>
+      <div className="flex h-screen bg-background text-foreground font-body transition-colors duration-300">
+        <Sidebar
+          currentView={currentView}
+          onViewChange={setCurrentView}
+          onCreateNote={() => setShowCreateForm(true)}
+          onLogin={() => setShowLoginForm(true)}
+          onSignup={() => setShowSignupForm(true)}
+          theme={theme}
+          toggleTheme={toggleTheme}
+        />
 
-      <main className="flex-1 flex flex-col overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-heading font-semibold text-elegant capitalize tracking-tight">
-              {currentView === "all" ? "All Notes" : currentView}
-            </h1>
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <div className="p-6 border-b border-border transition-colors duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-3xl font-heading font-semibold text-elegant capitalize tracking-tight">
+                {currentView === "all" ? "All Notes" : currentView}
+              </h1>
+            </div>
+
+            {(currentView === "all" || currentView === "favorites" || currentView === "deleted") && (
+              <SearchBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                placeholder={`Search ${currentView}...`}
+              />
+            )}
           </div>
 
-          {(currentView === "all" || currentView === "favorites" || currentView === "deleted") && (
-            <SearchBar
+          <div className="flex-1 overflow-auto">
+            <NotesGrid
+              notes={getFilteredNotes()}
+              onToggleFavorite={toggleFavorite}
+              onEdit={setEditingNote}
+              onDelete={deleteNote}
               searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              placeholder={`Search ${currentView}...`}
+              currentView={currentView}
             />
-          )}
-        </div>
-
-        <div className="flex-1 overflow-auto">
-          <NotesGrid
-            notes={getFilteredNotes()}
-            onToggleFavorite={toggleFavorite}
-            onEdit={setEditingNote}
-            onDelete={deleteNote}
-            searchQuery={searchQuery}
-            currentView={currentView}
-          />
-        </div>
+          </div>
+        </main>
 
         {showCreateForm && (
           <CreateNoteForm 
@@ -112,11 +141,11 @@ function App() {
             onClose={() => setEditingNote(null)} 
           />
         )}
-      </main>
 
-      {showLoginForm && <LoginForm onClose={() => setShowLoginForm(false)} />}
+        {showLoginForm && <LoginForm onClose={() => setShowLoginForm(false)} />}
 
-      {showSignupForm && <SignupForm onClose={() => setShowSignupForm(false)} />}
+        {showSignupForm && <SignupForm onClose={() => setShowSignupForm(false)} />}
+      </div>
     </div>
   )
 }

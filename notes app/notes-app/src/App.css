@@ -4,37 +4,138 @@
 
 /* Updated with advanced design tokens and modern styling */
 :root {
-  --background: #ffffff;
-  --foreground: #1f2937;
-  --card: #f9fafb;
-  --card-foreground: #1f2937;
-  --popover: #ffffff;
-  --popover-foreground: #1f2937;
-  --primary: #000000;
-  --primary-foreground: #ffffff;
-  --secondary: #374151;
-  --secondary-foreground: #ffffff;
-  --muted: #f3f4f6;
-  --muted-foreground: #6b7280;
-  --accent: #1f2937;
-  --accent-foreground: #ffffff;
-  --destructive: #dc2626;
-  --destructive-foreground: #ffffff;
-  --border: #e5e7eb;
-  --input: #f9fafb;
-  --ring: rgba(0, 0, 0, 0.2);
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 240 5.9% 10%;
   --radius: 0.75rem;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #1f2937;
-  --sidebar-primary: #f3f4f6;
-  --sidebar-primary-foreground: #1f2937;
-  --sidebar-accent: #000000;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #e5e7eb;
+  --sidebar: 0 0% 98%;
+  --sidebar-foreground: 240 5.3% 26.1%;
+  --sidebar-primary: 240 4.8% 95.9%;
+  --sidebar-primary-foreground: 240 5.9% 10%;
+  --sidebar-accent: 240 5.9% 10%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 240 5.9% 90%;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+[data-theme="dark"] {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 240 4.9% 83.9%;
+  --sidebar: 240 5.9% 10%;
+  --sidebar-foreground: 240 4.8% 95.9%;
+  --sidebar-primary: 240 3.7% 15.9%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 0 0% 98%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 240 3.7% 15.9%;
+}
+
+/* Apply the color variables */
+.app-container {
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.bg-background {
+  background-color: hsl(var(--background));
+}
+
+.text-foreground {
+  color: hsl(var(--foreground));
+}
+
+.bg-card {
+  background-color: hsl(var(--card));
+}
+
+.text-card-foreground {
+  color: hsl(var(--card-foreground));
+}
+
+.border-border {
+  border-color: hsl(var(--border));
+}
+
+.bg-sidebar {
+  background-color: hsl(var(--sidebar));
+}
+
+.text-sidebar-foreground {
+  color: hsl(var(--sidebar-foreground));
+}
+
+.bg-primary {
+  background-color: hsl(var(--primary));
+}
+
+.text-primary-foreground {
+  color: hsl(var(--primary-foreground));
+}
+
+.bg-accent {
+  background-color: hsl(var(--accent));
+}
+
+.text-accent-foreground {
+  color: hsl(var(--accent-foreground));
+}
+
+.bg-muted {
+  background-color: hsl(var(--muted));
+}
+
+.text-muted-foreground {
+  color: hsl(var(--muted-foreground));
+}
+
+.bg-secondary {
+  background-color: hsl(var(--secondary));
+}
+
+.text-secondary-foreground {
+  color: hsl(var(--secondary-foreground));
+}
+
+/* Smooth transitions for all themeable properties */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Advanced animations with smooth easing */
@@ -153,8 +254,8 @@
 
 /* Modern button styles */
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  color: var(--primary-foreground);
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+  color: hsl(var(--primary-foreground));
   border: none;
   border-radius: var(--radius);
   padding: 0.75rem 1.5rem;
@@ -169,9 +270,9 @@
 }
 
 .btn-secondary {
-  background: var(--card);
-  color: var(--card-foreground);
-  border: 2px solid var(--border);
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border: 2px solid hsl(var(--border));
   border-radius: var(--radius);
   padding: 0.75rem 1.5rem;
   font-weight: 500;
@@ -179,8 +280,8 @@
 }
 
 .btn-secondary:hover {
-  background: var(--muted);
-  border-color: var(--primary);
+  background: hsl(var(--muted));
+  border-color: hsl(var(--primary));
   transform: translateY(-1px);
 }
 
@@ -190,22 +291,22 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--muted);
+  background: hsl(var(--muted));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  background: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--primary)));
 }
 
 /* Advanced text utilities */
 .text-gradient {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -227,8 +328,8 @@
 
 /* Modern card styles */
 .card-modern {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -237,12 +338,12 @@
 .card-modern:hover {
   box-shadow: var(--shadow-lg);
   transform: translateY(-2px);
-  border-color: var(--primary);
+  border-color: hsl(var(--primary));
 }
 
 /* Loading states */
 .skeleton {
-  background: linear-gradient(90deg, var(--muted) 25%, var(--card) 50%, var(--muted) 75%);
+  background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--card)) 50%, hsl(var(--muted)) 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
 }
@@ -263,7 +364,7 @@
 }
 
 .focus-ring:focus {
-  box-shadow: 0 0 0 3px var(--ring);
+  box-shadow: 0 0 0 3px hsl(var(--ring));
 }
 
 /* Stagger animation delays */
@@ -281,4 +382,20 @@
 }
 .stagger-5 {
   animation-delay: 0.5s;
+}
+
+/* Animation for theme toggle */
+@keyframes themeSwitch {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.theme-transition {
+  animation: themeSwitch 0.3s ease;
 }

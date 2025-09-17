@@ -1,6 +1,6 @@
 "use client"
 
-const Sidebar = ({ currentView, onViewChange, onCreateNote, onLogin, onSignup }) => {
+const Sidebar = ({ currentView, onViewChange, onCreateNote, onLogin, onSignup, theme, toggleTheme }) => {
   const menuItems = [
     {
       id: "all",
@@ -47,15 +47,15 @@ const Sidebar = ({ currentView, onViewChange, onCreateNote, onLogin, onSignup })
   ]
 
   return (
-    <aside className="w-16 md:w-72 bg-white border-r border-gray-200 flex flex-col shadow-lg font-body transition-all duration-300">
-      <div className="p-3 md:p-6 border-b border-gray-100">
+    <aside className="w-16 md:w-72 bg-sidebar border-r border-border flex flex-col shadow-lg font-body transition-all duration-300">
+      <div className="p-3 md:p-6 border-b border-border">
         <h2 className="text-2xl font-heading font-semibold text-gradient text-elegant hidden md:block">BrainBox</h2>
-        <p className="text-sm text-gray-500 mt-1 text-refined hidden md:block">
+        <p className="text-sm text-muted-foreground mt-1 text-refined hidden md:block">
           Organize your thoughts, simplify your day
         </p>
         <div className="md:hidden flex justify-center">
-          <div className="w-full h-12 bg-gradient-to-r from-black to-gray-700 rounded-lg flex items-center justify-center">
-            <span className="text-xl text-white font-bold text-sm">B</span>
+          <div className="w-full h-12 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+            <span className="text-xl text-primary-foreground font-bold text-sm">B</span>
           </div>
         </div>
       </div>
@@ -83,8 +83,8 @@ const Sidebar = ({ currentView, onViewChange, onCreateNote, onLogin, onSignup })
                 onClick={() => onViewChange(item.id)}
                 className={`w-full px-2 md:px-4 py-3 rounded-xl text-left transition-all duration-300 flex items-center gap-4 group ${
                   currentView === item.id
-                    ? "bg-gradient-to-r from-black to-gray-700 text-white shadow-lg transform scale-105"
-                    : "text-gray-700 hover:bg-gray-50 hover:shadow-md hover-scale"
+                    ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg transform scale-105"
+                    : "text-sidebar-foreground hover:bg-accent hover:shadow-md hover-scale"
                 }`}
               >
                 <span
@@ -94,7 +94,7 @@ const Sidebar = ({ currentView, onViewChange, onCreateNote, onLogin, onSignup })
                 </span>
                 <span className="font-medium text-refined hidden md:inline">{item.label}</span>
                 {currentView === item.id && (
-                  <div className="ml-auto w-2 h-2 bg-white rounded-full animate-pulse hidden md:block"></div>
+                  <div className="ml-auto w-2 h-2 bg-primary-foreground rounded-full animate-pulse hidden md:block"></div>
                 )}
               </button>
             </li>
@@ -102,7 +102,29 @@ const Sidebar = ({ currentView, onViewChange, onCreateNote, onLogin, onSignup })
         </ul>
       </nav>
 
-      <div className="p-2 md:p-6 border-t border-gray-100 space-y-3 bg-gray-50">
+      <div className="p-2 md:p-6 border-t border-border space-y-3 bg-muted">
+        {/* Theme Toggle Button */}
+        <button
+          onClick={toggleTheme}
+          className="w-full px-2 md:px-4 py-3 btn-secondary hover-scale flex items-center gap-3 group justify-center md:justify-start"
+        >
+          {theme === "light" ? (
+            <>
+              <svg className="w-5 h-5 md:w-5 md:h-5 group-hover:scale-110 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+              <span className="font-medium text-refined hidden md:inline">Dark Mode</span>
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5 md:w-5 md:h-5 group-hover:scale-110 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <span className="font-medium text-refined hidden md:inline">Light Mode</span>
+            </>
+          )}
+        </button>
+
         <button
           onClick={onLogin}
           className="w-full px-2 md:px-4 py-3 btn-secondary hover-scale flex items-center gap-3 group justify-center md:justify-start"
