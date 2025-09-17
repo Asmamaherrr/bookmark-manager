@@ -16,12 +16,20 @@ function App() {
   const [showLoginForm, setShowLoginForm] = useState(false)
   const [showSignupForm, setShowSignupForm] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-
-  const { notes, addNote, toggleFavorite } = useNotes()
+  const [editingNote, setEditingNote] = useState(null)
+  
+  const { notes, addNote, toggleFavorite, updateNote, deleteNote } = useNotes()
 
   const handleCreateNote = (noteData) => {
     addNote(noteData)
     setShowCreateForm(false)
+  }
+
+  const handleEditNote = (noteData) => {
+    if (editingNote) {
+      updateNote(editingNote.id, noteData)
+      setEditingNote(null)
+    }
   }
 
   const getFilteredNotes = () => {
@@ -83,13 +91,28 @@ function App() {
           <NotesGrid
             notes={getFilteredNotes()}
             onToggleFavorite={toggleFavorite}
+            onEdit={setEditingNote}
+            onDelete={deleteNote}
             searchQuery={searchQuery}
             currentView={currentView}
           />
         </div>
-      </main>
 
-      {showCreateForm && <CreateNoteForm onSubmit={handleCreateNote} onClose={() => setShowCreateForm(false)} />}
+        {showCreateForm && (
+          <CreateNoteForm 
+            onSubmit={handleCreateNote} 
+            onClose={() => setShowCreateForm(false)} 
+          />
+        )}
+
+        {editingNote && (
+          <CreateNoteForm 
+            note={editingNote}
+            onSubmit={handleEditNote} 
+            onClose={() => setEditingNote(null)} 
+          />
+        )}
+      </main>
 
       {showLoginForm && <LoginForm onClose={() => setShowLoginForm(false)} />}
 

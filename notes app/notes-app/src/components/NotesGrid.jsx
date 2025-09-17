@@ -1,8 +1,10 @@
+"use client"
+
 import NoteCard from "./NoteCard"
 import EmptyState from "./EmptyState"
 import { groupNotesByTime } from "../utils/timeGrouping"
 
-const NotesGrid = ({ notes, onToggleFavorite, searchQuery, currentView }) => {
+const NotesGrid = ({ notes, onToggleFavorite, onEdit, onDelete, searchQuery, currentView }) => {
   if (notes.length === 0) {
     return <EmptyState searchQuery={searchQuery} currentView={currentView} />
   }
@@ -22,7 +24,12 @@ const NotesGrid = ({ notes, onToggleFavorite, searchQuery, currentView }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {groupNotes.map((note, index) => (
                 <div key={note.id} className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <NoteCard note={note} onToggleFavorite={onToggleFavorite} />
+                  <NoteCard 
+                    note={note} 
+                    onToggleFavorite={onToggleFavorite}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                  />
                 </div>
               ))}
             </div>
@@ -38,7 +45,12 @@ const NotesGrid = ({ notes, onToggleFavorite, searchQuery, currentView }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {notes.map((note, index) => (
           <div key={note.id} className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-            <NoteCard note={note} onToggleFavorite={onToggleFavorite} />
+            <NoteCard 
+              note={note} 
+              onToggleFavorite={onToggleFavorite}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
           </div>
         ))}
       </div>
