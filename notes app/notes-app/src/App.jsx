@@ -9,6 +9,9 @@ import SignupForm from "./components/SignupForm"
 import SearchBar from "./components/SearchBar"
 import { useNotes } from "./hooks/useNotes"
 import "./App.css"
+import MindMap from "./components/mindMapping"
+
+
 
 function App() {
   const [currentView, setCurrentView] = useState("all")
@@ -21,6 +24,8 @@ function App() {
   
   const { notes, addNote, toggleFavorite, updateNote, deleteNote } = useNotes()
 
+  const [showMindMap, setShowMindMap] = useState(false)
+const [mindMapData, setMindMapData] = useState(null)
   // Load theme from localStorage on component mount
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme")
@@ -56,6 +61,15 @@ function App() {
       setEditingNote(null)
     }
   }
+const handleSaveMindMap = (mindMapData) => {
+  const content = `# Mind Map\n\n${JSON.stringify(mindMapData, null, 2)}`
+  addNote({
+    title: `Mind Map ${new Date().toLocaleDateString()}`,
+    content,
+    tags: ["mindmap", "visualization"]
+  })
+  setShowMindMap(false)
+}
 
   const getFilteredNotes = () => {
     let filtered = notes
@@ -89,15 +103,15 @@ function App() {
     <div className="app-container" data-theme={theme}>
       <div className="flex h-screen bg-background text-foreground font-body transition-colors duration-300">
         <Sidebar
-          currentView={currentView}
-          onViewChange={setCurrentView}
-          onCreateNote={() => setShowCreateForm(true)}
-          onLogin={() => setShowLoginForm(true)}
-          onSignup={() => setShowSignupForm(true)}
-          theme={theme}
-          toggleTheme={toggleTheme}
-        />
-
+  currentView={currentView}
+  onViewChange={setCurrentView}
+  onCreateNote={() => setShowCreateForm(true)}
+  onLogin={() => setShowLoginForm(true)}
+  onSignup={() => setShowSignupForm(true)}
+  theme={theme}
+  toggleTheme={toggleTheme}
+  onShowMindMap={() => setShowMindMap(true)} // Add this line
+/>
         <main className="flex-1 flex flex-col overflow-hidden">
           <div className="p-6 border-b border-border transition-colors duration-300">
             <div className="flex items-center justify-between mb-4">
@@ -141,7 +155,13 @@ function App() {
             onClose={() => setEditingNote(null)} 
           />
         )}
-
+{showMindMap && (
+  <MindMap 
+    onClose={() => setShowMindMap(false)} 
+    onSave={handleSaveMindMap}
+    initialData={mindMapData}
+  />
+)}
         {showLoginForm && <LoginForm onClose={() => setShowLoginForm(false)} />}
 
         {showSignupForm && <SignupForm onClose={() => setShowSignupForm(false)} />}
