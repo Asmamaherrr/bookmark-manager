@@ -29,7 +29,7 @@ const CreateNoteForm = ({ note, onSubmit, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg w-full max-w-md animate-scale-in">
+      <div className="bg-white rounded-lg w-full max-w-md animate-scale-in text-black">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">

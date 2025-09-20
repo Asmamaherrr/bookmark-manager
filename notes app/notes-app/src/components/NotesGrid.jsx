@@ -4,9 +4,9 @@ import NoteCard from "./NoteCard"
 import EmptyState from "./EmptyState"
 import { groupNotesByTime } from "../utils/timeGrouping"
 
-const NotesGrid = ({ notes, onToggleFavorite, onEdit, onDelete, searchQuery, currentView }) => {
+const NotesGrid = ({ notes, onToggleFavorite, onEdit, onDelete, searchQuery, currentView, activeSmartCollection }) => { // Add activeSmartCollection prop
   if (notes.length === 0) {
-    return <EmptyState searchQuery={searchQuery} currentView={currentView} />
+    return <EmptyState searchQuery={searchQuery} currentView={currentView} activeSmartCollection={activeSmartCollection} />; // Pass activeSmartCollection
   }
 
   // Group notes by time for 'all' view
