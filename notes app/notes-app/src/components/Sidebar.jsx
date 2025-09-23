@@ -37,6 +37,78 @@ const Sidebar = ({
 }) => {
   const [showSmartCollections, setShowSmartCollections] = useState(false);
 
+  // Updated color definitions to match App.js themes
+  const colors = {
+    light: {
+      background: "bg-amber-50",
+      card: "bg-white",
+      border: "border-amber-200",
+      primary: "text-amber-900",
+      secondary: "text-amber-700",
+      muted: "text-amber-600",
+      accent: "bg-amber-100",
+      accentForeground: "text-amber-900",
+      hover: "bg-amber-100",
+      active: "bg-amber-500",
+      activeText: "text-white"
+    },
+    dark: {
+      background: "bg-gray-900",
+      card: "bg-gray-800",
+      border: "border-gray-700",
+      primary: "text-gray-100",
+      secondary: "text-gray-300",
+      muted: "text-gray-400",
+      accent: "bg-blue-900",
+      accentForeground: "text-blue-100",
+      hover: "bg-gray-700",
+      active: "bg-blue-600",
+      activeText: "text-white"
+    },
+    blueLight: {
+      background: "bg-blue-50",
+      card: "bg-white",
+      border: "border-blue-200",
+      primary: "text-blue-900",
+      secondary: "text-blue-700",
+      muted: "text-blue-600",
+      accent: "bg-blue-100",
+      accentForeground: "text-blue-900",
+      hover: "bg-blue-100",
+      active: "bg-blue-500",
+      activeText: "text-white"
+    },
+    greenLight: {
+      background: "bg-emerald-50",
+      card: "bg-white",
+      border: "border-emerald-200",
+      primary: "text-emerald-900",
+      secondary: "text-emerald-700",
+      muted: "text-emerald-600",
+      accent: "bg-emerald-100",
+      accentForeground: "text-emerald-900",
+      hover: "bg-emerald-100",
+      active: "bg-emerald-500",
+      activeText: "text-white"
+    },
+    sepia: {
+      background: "bg-amber-50",
+      card: "bg-amber-100",
+      border: "border-amber-200",
+      primary: "text-amber-900",
+      secondary: "text-amber-800",
+      muted: "text-amber-700",
+      accent: "bg-amber-200",
+      accentForeground: "text-amber-900",
+      hover: "bg-amber-200",
+      active: "bg-amber-600",
+      activeText: "text-white"
+    }
+  };
+
+  // Safe access to colors with fallback
+  const currentColors = colors[theme] || colors.light;
+
   const SidebarButton = ({
     icon,
     label,
@@ -49,8 +121,8 @@ const Sidebar = ({
       className={`flex items-center w-full px-4 py-3 rounded-xl transition-all duration-200 ease-in-out font-medium group
         ${
           isActive
-            ? "bg-accent text-accent-foreground shadow-md"
-            : "text-muted-foreground hover:bg-muted"
+            ? `${currentColors.accent} ${currentColors.accentForeground} shadow-md`
+            : `${currentColors.muted} hover:${currentColors.hover}`
         }
         ${isSecondary ? "text-sm" : ""}`}
     >
@@ -58,8 +130,8 @@ const Sidebar = ({
         className={`w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-200 mr-4
           ${
             isActive
-              ? "bg-accent-foreground text-accent"
-              : "bg-muted text-muted-foreground group-hover:bg-accent group-hover:text-accent-foreground"
+              ? `${currentColors.active} ${currentColors.activeText}`
+              : `bg-opacity-50 ${currentColors.hover} ${currentColors.muted} group-hover:${currentColors.accent} group-hover:${currentColors.accentForeground}`
           }`}
       >
         {icon}
@@ -73,8 +145,8 @@ const Sidebar = ({
     return (
       <button
         onClick={() => onSmartCollectionChange(collection.id)}
-        className={`flex items-center w-full py-2 px-4 rounded-xl transition-colors duration-200 font-normal hover:bg-muted text-left
-        ${isActive ? "bg-muted text-foreground font-semibold" : "text-muted-foreground"}`}
+        className={`flex items-center w-full py-2 px-4 rounded-xl transition-colors duration-200 font-normal hover:${currentColors.hover} text-left
+        ${isActive ? `${currentColors.hover} ${currentColors.primary} font-semibold` : currentColors.muted}`}
       >
         <Bookmark className="w-4 h-4 mr-3" />
         <span>{collection.label}</span>
@@ -82,15 +154,26 @@ const Sidebar = ({
     );
   };
 
+  // Get appropriate theme icon
+  const getThemeIcon = () => {
+    switch (theme) {
+      case 'dark': return <Sun size={20} />;
+      case 'blueLight': return <Palette size={20} />;
+      case 'greenLight': return <Palette size={20} />;
+      case 'sepia': return <Palette size={20} />;
+      default: return <Moon size={20} />;
+    }
+  };
+
   return (
-    <aside className="w-72 bg-card border-r border-border flex flex-col transition-colors duration-300 h-full">
+    <aside className={`w-72 ${currentColors.card} border-r ${currentColors.border} flex flex-col transition-colors duration-300 h-full`}>
       {/* Fixed header section */}
-      <div className="p-6 flex-shrink-0 border-b border-border">
+      <div className={`p-6 flex-shrink-0 border-b ${currentColors.border}`}>
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold font-heading text-primary">Notes.</h1>
+          <h1 className={`text-2xl font-bold font-heading ${currentColors.primary}`}>Notes.</h1>
           <button
             onClick={onCreateNote}
-            className="btn-primary-icon p-2"
+            className={`p-2 rounded-lg ${currentColors.hover} ${currentColors.primary} hover:${currentColors.accent} hover:${currentColors.accentForeground} transition-colors`}
             title="Create New Note"
           >
             <Plus className="w-5 h-5" />
@@ -125,9 +208,9 @@ const Sidebar = ({
             <div className="space-y-2">
               <button
                 onClick={() => setShowSmartCollections(!showSmartCollections)}
-                className="flex items-center w-full px-4 py-3 rounded-xl transition-colors duration-200 ease-in-out font-medium text-muted-foreground hover:bg-muted"
+                className={`flex items-center w-full px-4 py-3 rounded-xl transition-colors duration-200 ease-in-out font-medium ${currentColors.muted} hover:${currentColors.hover}`}
               >
-                <div className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-200 mr-4 bg-muted text-muted-foreground">
+                <div className={`w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-200 mr-4 ${currentColors.hover} ${currentColors.muted}`}>
                   <Bookmark className="w-5 h-5" />
                 </div>
                 <span className="flex-1 text-left">Smart Collections</span>
@@ -176,22 +259,22 @@ const Sidebar = ({
       </div>
 
       {/* Fixed footer section */}
-      <div className="flex-shrink-0 border-t border-border">
+      <div className={`flex-shrink-0 border-t ${currentColors.border}`}>
         <div className="p-6 space-y-4">
           <div className="flex items-center justify-between px-2">
-            <span className="text-sm font-semibold text-muted-foreground">
+            <span className={`text-sm font-semibold ${currentColors.muted}`}>
               Theme
             </span>
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-muted transition-colors"
+              className={`p-2 rounded-full hover:${currentColors.hover} transition-colors ${currentColors.primary}`}
+              title={`Current: ${theme}`}
             >
-              {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+              {getThemeIcon()}
             </button>
           </div>
           
           <div className="space-y-1">
-          
             <SidebarButton
               icon={<Plus />}
               label="Login"

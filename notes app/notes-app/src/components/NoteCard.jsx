@@ -1,29 +1,102 @@
-"use client"
+"use client";
 
-const NoteCard = ({ note, onToggleFavorite, onEdit, onDelete }) => {
+const NoteCard = ({ note, onToggleFavorite, onEdit, onDelete, theme = "light" }) => {
+  // Color definitions for better contrast
+  const colors = {
+    light: {
+      card: {
+        background: "bg-white",
+        border: "border-gray-200",
+        hover: "hover:shadow-xl"
+      },
+      text: {
+        primary: "text-gray-900",
+        secondary: "text-gray-700",
+        muted: "text-gray-600"
+      },
+      accent: {
+        background: "bg-blue-100",
+        text: "text-blue-900",
+        hover: "hover:bg-blue-200"
+      },
+      muted: {
+        background: "bg-gray-100",
+        text: "text-gray-700"
+      },
+      destructive: {
+        text: "text-red-600",
+        hover: "hover:bg-red-50"
+      }
+    },
+    dark: {
+      card: {
+        background: "bg-blue-800",
+        border: "border-blue-700",
+        hover: "hover:shadow-2xl hover:shadow-gray-900/50"
+      },
+      text: {
+        primary: "text-blue-100",
+        secondary: "text-blue-300",
+        muted: "text-blue-400"
+      },
+      accent: {
+        background: "bg-blue-900",
+        text: "text-blue-100",
+        hover: "hover:bg-blue-800"
+      },
+      muted: {
+        background: "bg-gray-700",
+        text: "text-gray-300"
+      },
+      destructive: {
+        text: "text-red-400",
+        hover: "hover:bg-red-900/30"
+      }
+    }
+  };
+
+  // Safe access to colors with fallback
+  const currentColors = colors[theme] || colors.light;
+
+  if (!note) {
+    return (
+      <div className={`${currentColors.card.background} border ${currentColors.card.border} rounded-xl p-6 animate-pulse`}>
+        <div className="h-4 bg-gray-300 rounded mb-2"></div>
+        <div className="h-3 bg-gray-300 rounded w-3/4 mb-4"></div>
+        <div className="flex justify-between">
+          <div className="h-3 bg-gray-300 rounded w-1/4"></div>
+          <div className="flex gap-1">
+            <div className="h-6 w-6 bg-gray-300 rounded"></div>
+            <div className="h-6 w-6 bg-gray-300 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
-    })
-  }
+    });
+  };
 
   return (
-    <div className="bg-card border border-border rounded-xl p-6 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 group relative overflow-hidden stagger-animation hover-lift theme-transition">
-      <div className="absolute inset-0 bg-gradient-to-br from-card via-card to-muted opacity-50 pointer-events-none"></div>
+    <div className={`${currentColors.card.background} border ${currentColors.card.border} rounded-xl p-6 ${currentColors.card.hover} transition-all duration-500 hover:-translate-y-2 group relative overflow-hidden`}>
+      <div className={`absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-${theme === 'light' ? 'gray-50' : 'gray-700'} opacity-50 pointer-events-none`}></div>
 
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-4">
-          <h3 className="text-elegant font-semibold text-card-foreground line-clamp-2 flex-1 text-lg leading-tight tracking-tight">
+          <h3 className={`font-semibold ${currentColors.text.primary} line-clamp-2 flex-1 text-lg leading-tight tracking-tight`}>
             {note.title}
           </h3>
           <button
             onClick={() => onToggleFavorite(note.id)}
-            className={`ml-3 p-2 rounded-full transition-all duration-300 hover:scale-110 focus-ring ${
+            className={`ml-3 p-2 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
               note.isFavorite
-                ? "text-primary bg-accent/20 hover:bg-accent/30"
-                : "text-muted-foreground hover:text-accent-foreground hover:bg-accent/10"
+                ? `${currentColors.accent.text} ${currentColors.accent.background} hover:${currentColors.accent.hover}`
+                : `${currentColors.text.muted} hover:${currentColors.accent.text} hover:${currentColors.accent.background}`
             }`}
           >
             {note.isFavorite ? (
@@ -43,20 +116,22 @@ const NoteCard = ({ note, onToggleFavorite, onEdit, onDelete }) => {
           </button>
         </div>
 
-        <p className="text-refined text-muted-foreground text-sm mb-4 line-clamp-3 leading-relaxed">{note.content}</p>
+        <p className={`${currentColors.text.secondary} text-sm mb-4 line-clamp-3 leading-relaxed`}>
+          {note.content}
+        </p>
 
-        {note.tags.length > 0 && (
+        {note.tags && note.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
             {note.tags.slice(0, 3).map((tag, index) => (
               <span
                 key={index}
-                className="px-3 py-1.5 bg-muted text-muted-foreground text-xs rounded-full font-medium border border-border/50 hover:bg-accent/20 transition-colors"
+                className={`px-3 py-1.5 ${currentColors.muted.background} ${currentColors.muted.text} text-xs rounded-full font-medium border ${currentColors.card.border} hover:${currentColors.accent.background} hover:${currentColors.accent.text} transition-colors`}
               >
                 {tag}
               </span>
             ))}
             {note.tags.length > 3 && (
-              <span className="px-3 py-1.5 bg-accent/10 text-accent-foreground text-xs rounded-full font-medium border border-border/50">
+              <span className={`px-3 py-1.5 ${currentColors.accent.background} ${currentColors.accent.text} text-xs rounded-full font-medium border ${currentColors.card.border}`}>
                 +{note.tags.length - 3}
               </span>
             )}
@@ -64,14 +139,14 @@ const NoteCard = ({ note, onToggleFavorite, onEdit, onDelete }) => {
         )}
 
         <div className="flex items-center justify-between">
-          <span className="text-refined text-xs text-muted-foreground font-medium tracking-wide">
+          <span className={`text-xs ${currentColors.text.muted} font-medium tracking-wide`}>
             {formatDate(note.createdAt)}
           </span>
 
           <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 flex gap-1 translate-x-2 group-hover:translate-x-0">
             <button
               onClick={() => onEdit(note)}
-              className="hover:text-primary p-2 rounded-full transition-all duration-300 hover:bg-accent/20 hover:scale-110 focus-ring"
+              className={`${currentColors.text.muted} hover:${currentColors.accent.text} p-2 rounded-full transition-all duration-300 hover:${currentColors.accent.background} hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
               title="Edit"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,7 +160,7 @@ const NoteCard = ({ note, onToggleFavorite, onEdit, onDelete }) => {
             </button>
             <button
               onClick={() => onDelete(note.id)}
-              className="hover:text-destructive p-2 rounded-full transition-all duration-300 hover:bg-destructive/10 hover:scale-110 focus-ring"
+              className={`${currentColors.text.muted} hover:${currentColors.destructive.text} p-2 rounded-full transition-all duration-300 hover:${currentColors.destructive.hover} hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50`}
               title="Delete"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,7 +176,7 @@ const NoteCard = ({ note, onToggleFavorite, onEdit, onDelete }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default NoteCard
+export default NoteCard;
