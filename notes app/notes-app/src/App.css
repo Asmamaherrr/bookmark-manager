@@ -1,12 +1,63 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-html,
-body,
-#root {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+/* Add to your App.css or global CSS file */
+/* Custom scrollbar for sidebar */
+aside::-webkit-scrollbar {
+  width: 4px;
+}
+
+aside::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+aside::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 2px;
+}
+
+aside::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* Smooth animations */
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.app-container {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-container .flex.h-screen {
+  background-color: var(--background);
+}
+
+/* Ensure the main content area has proper background */
+main {
+  background-color: var(--background);
+}
+
+/* Make sure the notes grid area has the same background */
+.flex-1.overflow-auto {
+  background-color: var(--background);
+}
+
+/* If using CSS variables, make sure they're defined */
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+  /* Add other theme variables as needed */
+}
+
+[data-theme="dark"] {
+  --background: #1a1a1a;
+  --foreground: #ffffff;
 }
 /* Updated with advanced design tokens and modern styling */
 :root {
