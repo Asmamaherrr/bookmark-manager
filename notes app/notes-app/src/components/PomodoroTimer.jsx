@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Play, Pause, RotateCcw, Settings2, X, Coffee, Target } from "lucide-react";
 
 const PomodoroTimer = ({ onClose }) => {
   const [minutes, setMinutes] = useState(25);
@@ -10,6 +11,7 @@ const PomodoroTimer = ({ onClose }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [focusMinutes, setFocusMinutes] = useState(25);
   const [breakMinutes, setBreakMinutes] = useState(5);
+  const [completedSessions, setCompletedSessions] = useState(0);
 
   useEffect(() => {
     let interval = null;
@@ -18,15 +20,16 @@ const PomodoroTimer = ({ onClose }) => {
       interval = setInterval(() => {
         if (seconds === 0) {
           if (minutes === 0) {
-            // Timer has ended
             setIsActive(false);
             if (isBreak) {
-              setMinutes(focusMinutes); // Back to work
+              setMinutes(focusMinutes);
               setIsBreak(false);
             } else {
-              setMinutes(breakMinutes); // Start break
+              setMinutes(breakMinutes);
               setIsBreak(true);
+              setCompletedSessions(prev => prev + 1);
             }
+            new Audio('data:audio/mp3;base64,').play().catch(e => console.log('Audio play failed'));
           } else {
             setMinutes(minutes - 1);
             setSeconds(59);
@@ -35,9 +38,8 @@ const PomodoroTimer = ({ onClose }) => {
           setSeconds(seconds - 1);
         }
       }, 1000);
-    } else if (!isActive && seconds !== 0) {
-      clearInterval(interval);
     }
+    
     return () => clearInterval(interval);
   }, [isActive, minutes, seconds, isBreak, focusMinutes, breakMinutes]);
 
@@ -68,124 +70,154 @@ const PomodoroTimer = ({ onClose }) => {
     return time < 10 ? `0${time}` : time;
   };
 
+  const progress = isBreak 
+    ? ((breakMinutes * 60 - (minutes * 60 + seconds)) / (breakMinutes * 60)) * 100
+    : ((focusMinutes * 60 - (minutes * 60 + seconds)) / (focusMinutes * 60)) * 100;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-      <div className="bg-card text-card-foreground p-8 rounded-2xl shadow-2xl w-full max-w-sm">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold">
-            {isBreak ? "Break Time" : "Focus Time"}
-          </h2>
-          <div className="flex items-center space-x-2">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in-up">
+      <div className="bg-card text-card-foreground p-8 rounded-3xl shadow-2xl w-full max-w-md border border-border animate-scale-in-smooth">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center gap-3">
+            <div className={`p-3 rounded-xl ${isBreak ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'}`}>
+              {isBreak ? <Coffee className="w-6 h-6" /> : <Target className="w-6 h-6" />}
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">
+                {isBreak ? "Break Time" : "Focus Time"}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Session {completedSessions + 1} • {completedSessions} completed
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="p-2 rounded-full hover:bg-muted transition-colors"
+              className="p-2.5 rounded-xl hover:bg-muted transition-all duration-200 group"
+              aria-label="Settings"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.608 3.292 0z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
+              <Settings2 className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-muted transition-colors"
+              className="p-2.5 rounded-xl hover:bg-muted transition-all duration-200 group"
+              aria-label="Close"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <X className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
             </button>
           </div>
         </div>
 
+        {/* Settings Panel */}
         {showSettings && (
-          <form onSubmit={saveSettings} className="mb-6 space-y-4">
+          <form onSubmit={saveSettings} className="mb-6 p-4 bg-muted rounded-2xl space-y-4 animate-slide-in-right">
             <div className="flex items-center justify-between">
-              <label htmlFor="focus-time" className="block font-medium">
-                Focus Minutes
+              <label htmlFor="focus-time" className="font-medium text-foreground">
+                Focus Duration
               </label>
-              <input
-                id="focus-time"
-                type="number"
-                value={focusMinutes}
-                onChange={(e) => setFocusMinutes(parseInt(e.target.value))}
-                className="w-20 px-3 text-black py-2 text-center rounded-lg bg-input border border-border focus:outline-none focus:ring-2 focus:ring-accent"
-                min="1"
-              />
+              <div className="flex items-center gap-2">
+                <input
+                  id="focus-time"
+                  type="number"
+                  value={focusMinutes}
+                  onChange={(e) => setFocusMinutes(Math.max(1, parseInt(e.target.value) || 1))}
+                  className="w-20 px-3 py-2 text-center rounded-lg bg-background border-2 border-border focus:border-primary transition-colors duration-200 outline-none"
+                  min="1"
+                  max="60"
+                />
+                <span className="text-sm text-muted-foreground">min</span>
+              </div>
             </div>
             <div className="flex items-center justify-between">
-              <label htmlFor="break-time" className="block font-medium">
-                Break Minutes
+              <label htmlFor="break-time" className="font-medium text-foreground">
+                Break Duration
               </label>
-              <input
-                id="break-time"
-                type="number"
-                value={breakMinutes}
-                onChange={(e) => setBreakMinutes(parseInt(e.target.value))}
-                className="w-20 px-3 text-black py-2 text-center rounded-lg bg-input border border-border focus:outline-none focus:ring-2 focus:ring-accent"
-                min="1"
-              />
+              <div className="flex items-center gap-2">
+                <input
+                  id="break-time"
+                  type="number"
+                  value={breakMinutes}
+                  onChange={(e) => setBreakMinutes(Math.max(1, parseInt(e.target.value) || 1))}
+                  className="w-20 px-3 py-2 text-center rounded-lg bg-background border-2 border-border focus:border-primary transition-colors duration-200 outline-none"
+                  min="1"
+                  max="30"
+                />
+                <span className="text-sm text-muted-foreground">min</span>
+              </div>
             </div>
-            <button type="submit" className="btn-primary w-full">
-              Save
+            <button type="submit" className="w-full btn-primary py-2.5">
+              Apply Settings
             </button>
           </form>
         )}
 
-        <div className="text-center mb-6">
-          <p className="text-6xl font-bold font-mono">
-            {formatTime(minutes)}:{formatTime(seconds)}
-          </p>
+        {/* Timer Display */}
+        <div className="relative mb-8">
+          <div className="relative w-64 h-64 mx-auto">
+            <svg className="w-full h-full transform -rotate-90">
+              <circle
+                cx="128"
+                cy="128"
+                r="120"
+                stroke="currentColor"
+                strokeWidth="8"
+                fill="none"
+                className="text-muted"
+              />
+              <circle
+                cx="128"
+                cy="128"
+                r="120"
+                stroke="currentColor"
+                strokeWidth="8"
+                fill="none"
+                strokeDasharray={`${2 * Math.PI * 120}`}
+                strokeDashoffset={`${2 * Math.PI * 120 * (1 - progress / 100)}`}
+                className={`transition-all duration-1000 ${
+                  isBreak ? 'text-green-500' : 'text-primary'
+                }`}
+                strokeLinecap="round"
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <p className="text-6xl font-bold font-mono text-foreground">
+                {formatTime(minutes)}:{formatTime(seconds)}
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                {Math.round(progress)}% complete
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="flex justify-center space-x-4">
+        {/* Controls */}
+        <div className="flex justify-center gap-3">
           <button
             onClick={toggleTimer}
-            className="btn-primary"
+            className={`btn-primary px-6 py-3 flex items-center gap-2 ${
+              isActive ? 'bg-destructive hover:bg-destructive/90' : ''
+            }`}
           >
             {isActive ? (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <>
+                <Pause className="w-5 h-5" />
+                <span>Pause</span>
+              </>
             ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197 2.132A1 1 0 0110 13.912V9.088a1 1 0 011.555-.832l3.197 2.132a1 1 0 010 1.664z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <>
+                <Play className="w-5 h-5" />
+                <span>Start</span>
+              </>
             )}
-            <span className="ml-2">{isActive ? "Pause" : "Start"}</span>
           </button>
           <button
             onClick={resetTimer}
-            className="btn-secondary"
+            className="btn-secondary px-6 py-3 flex items-center gap-2"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356-2A8.001 8.001 0 004.582 9m2.356 2H20v5m-.582 2a8.001 8.001 0 01-15.356-2" />
-            </svg>
-            <span className="ml-2">Reset</span>
+            <RotateCcw className="w-5 h-5" />
+            <span>Reset</span>
           </button>
         </div>
       </div>

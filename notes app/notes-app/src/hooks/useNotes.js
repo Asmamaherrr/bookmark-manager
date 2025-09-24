@@ -1,88 +1,56 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useAuth } from "./useAuth"
 
 export const useNotes = () => {
   const [notes, setNotes] = useState([])
+  const { user } = useAuth()
 
-  // Load notes from localStorage on mount
+  const getStorageKey = () => {
+    return user ? `notes_${user.id}` : 'notes_guest'
+  }
+
+  // Load notes from localStorage on mount or user change
   useEffect(() => {
-    const savedNotes = localStorage.getItem("notes")
-    if (savedNotes && JSON.parse(savedNotes).length > 0) {
-      setNotes(JSON.parse(savedNotes))
+    const storageKey = getStorageKey()
+    const savedNotes = localStorage.getItem(storageKey)
+    
+    if (savedNotes) {
+      try {
+        const parsedNotes = JSON.parse(savedNotes)
+        setNotes(parsedNotes)
+      } catch (error) {
+        console.error('Error parsing saved notes:', error)
+        setNotes([])
+      }
     } else {
-      const sampleNotes = [
-        {
-          id: "1",
-          title: "School Requirements",
-          content: "school ID and 2 photos, last year’s report card, notebooks, pens, pencils, colors, and ruler",
-          tags: ["welcome", "getting-started"],
-          isFavorite: true,
-          isDeleted: false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          id: "2",
-          title: "Meeting Notes",
-          content: "Discussed project timeline and deliverables. Next meeting scheduled for Friday.",
-          tags: ["work", "meetings"],
-          isFavorite: false,
-          isDeleted: false,
-          createdAt: new Date(Date.now() - 86400000).toISOString(), // Yesterday
-          updatedAt: new Date(Date.now() - 86400000).toISOString(),
-        },
-        {
-          id: "3",
-          title: "Shopping List",
-          content: "Milk, Bread, Eggs, Apples, Chicken, Rice, Olive Oil, Tomatoes",
-          tags: ["personal", "shopping"],
-          isFavorite: true,
-          isDeleted: false,
-          createdAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-          updatedAt: new Date(Date.now() - 172800000).toISOString(),
-        },
-        {
-          id: "4",
-          title: "Book Ideas",
-          content: "1. The Art of Minimalism\n2. Digital Detox Guide\n3. Productivity Hacks for Developers",
-          tags: ["ideas", "books", "writing"],
-          isFavorite: false,
-          isDeleted: false,
-          createdAt: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
-          updatedAt: new Date(Date.now() - 259200000).toISOString(),
-        },
-        {
-          id: "5",
-          title: "Travel Plans",
-          content:
-            "Summer vacation to Japan:\n- Visit Tokyo and Kyoto\n- Try authentic ramen\n- Visit temples and gardens",
-          tags: ["travel", "vacation", "japan"],
-          isFavorite: true,
-          isDeleted: false,
-          createdAt: new Date(Date.now() - 604800000).toISOString(), // 1 week ago
-          updatedAt: new Date(Date.now() - 604800000).toISOString(),
-        },
-        {
-          id: "6",
-          title: "Recipe: Pasta Carbonara",
-          content:
-            "Ingredients: Pasta, Eggs, Parmesan, Pancetta, Black Pepper\nCook pasta, mix with egg mixture, add pancetta and cheese.",
-          tags: ["recipe", "cooking", "italian"],
-          isFavorite: false,
-          isDeleted: false,
-          createdAt: new Date(Date.now() - 1209600000).toISOString(), // 2 weeks ago
-          updatedAt: new Date(Date.now() - 1209600000).toISOString(),
-        },
-      ]
-      setNotes(sampleNotes)
-      localStorage.setItem("notes", JSON.stringify(sampleNotes))
+      // Initialize with sample notes for new users
+      if (!user) {
+        const sampleNotes = [
+          {
+            id: "1",
+            title: "Welcome to Notes",
+            content: "Start creating your notes! Click the 'Create New Note' button to begin.",
+            tags: ["welcome", "getting-started"],
+            isFavorite: true,
+            isDeleted: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          }
+        ]
+        setNotes(sampleNotes)
+      } else {
+        setNotes([])
+      }
     }
-  }, [])
+  }, [user])
 
-  // Save notes to localStorage whenever notes change
+  // Save notes to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem("notes", JSON.stringify(notes))
+    if (notes.length > 0 || localStorage.getItem(getStorageKey())) {
+      localStorage.setItem(getStorageKey(), JSON.stringify(notes))
+    }
   }, [notes])
 
   const addNote = (noteData) => {
@@ -93,9 +61,11 @@ export const useNotes = () => {
       isDeleted: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      userId: user?.id || 'guest'
     }
 
     setNotes((prev) => [newNote, ...prev])
+    return newNote
   }
 
   const toggleFavorite = (noteId) => {
@@ -122,10 +92,76 @@ export const useNotes = () => {
     )
   }
 
+  const permanentlyDeleteNote = (noteId) => {
+    setNotes((prev) => prev.filter(note => note.id !== noteId))
+  }
+
   const updateNote = (noteId, updates) => {
     setNotes((prev) =>
-      prev.map((note) => (note.id === noteId ? { ...note, ...updates, updatedAt: new Date().toISOString() } : note)),
+      prev.map((note) => 
+        note.id === noteId 
+          ? { ...note, ...updates, updatedAt: new Date().toISOString() } 
+          : note
+      ),
     )
+  }
+
+  const searchNotes = (query) => {
+    if (!query.trim()) return notes
+
+    return notes.filter(note => 
+      note.title.toLowerCase().includes(query.toLowerCase()) ||
+      note.content.toLowerCase().includes(query.toLowerCase()) ||
+      note.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
+    )
+  }
+
+  const getStats = () => {
+    return {
+      total: notes.filter(n => !n.isDeleted).length,
+      favorites: notes.filter(n => n.isFavorite && !n.isDeleted).length,
+      deleted: notes.filter(n => n.isDeleted).length,
+      tags: [...new Set(notes.flatMap(n => n.tags))].length
+    }
+  }
+
+  const exportNotes = () => {
+    const dataStr = JSON.stringify(notes, null, 2)
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr)
+    
+    const exportFileDefaultName = `notes-backup-${new Date().toISOString().split('T')[0]}.json`
+    
+    const linkElement = document.createElement('a')
+    linkElement.setAttribute('href', dataUri)
+    linkElement.setAttribute('download', exportFileDefaultName)
+    linkElement.click()
+  }
+
+  const importNotes = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        try {
+          const importedNotes = JSON.parse(e.target.result)
+          // Validate the structure
+          if (Array.isArray(importedNotes)) {
+            const processedNotes = importedNotes.map(note => ({
+              ...note,
+              id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+              userId: user?.id || 'guest',
+              importedAt: new Date().toISOString()
+            }))
+            setNotes(prev => [...prev, ...processedNotes])
+            resolve(processedNotes.length)
+          } else {
+            reject(new Error('Invalid file format'))
+          }
+        } catch (error) {
+          reject(error)
+        }
+      }
+      reader.readAsText(file)
+    })
   }
 
   return {
@@ -134,6 +170,11 @@ export const useNotes = () => {
     toggleFavorite,
     deleteNote,
     restoreNote,
+    permanentlyDeleteNote,
     updateNote,
+    searchNotes,
+    getStats,
+    exportNotes,
+    importNotes
   }
 }

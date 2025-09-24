@@ -1,82 +1,125 @@
-const EmptyState = ({ searchQuery, currentView }) => {
-  const getEmptyMessage = () => {
+"use client";
+
+import { FileText, Star, Trash2, Search, Plus, Sparkles, Tag } from "lucide-react";
+
+const EmptyState = ({ searchQuery, currentView, activeSmartCollection }) => {
+  const getEmptyContent = () => {
     if (searchQuery) {
       return {
         title: "No results found",
-        message: `No notes match "${searchQuery}". Try a different search term.`,
-        icon: (
-          <svg className="w-16 h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        ),
-      }
+        message: `We couldn't find any notes matching "${searchQuery}". Try adjusting your search or creating a new note.`,
+        icon: Search,
+        action: {
+          text: "Clear search",
+          onClick: () => window.location.reload() // You would pass the actual clear function
+        }
+      };
+    }
+
+    if (activeSmartCollection) {
+      return {
+        title: "No notes in this collection",
+        message: "This smart collection doesn't have any notes yet. Notes matching the criteria will appear here automatically.",
+        icon: Tag,
+        showCreateButton: true
+      };
     }
 
     switch (currentView) {
       case "favorites":
         return {
           title: "No favorites yet",
-          message: "Star your important notes to see them here.",
-          icon: (
-            <svg className="w-16 h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-              />
-            </svg>
-          ),
-        }
+          message: "Star your important notes to see them here. Your favorite notes will be easily accessible in one place.",
+          icon: Star,
+          tips: [
+            "Click the star icon on any note to add it to favorites",
+            "Use favorites for quick access to important notes",
+            "Organize your most-used notes for better productivity"
+          ]
+        };
+        
       case "deleted":
         return {
-          title: "No deleted notes",
-          message: "Deleted notes will appear here.",
-          icon: (
-            <svg className="w-16 h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-              />
-            </svg>
-          ),
-        }
+          title: "Trash is empty",
+          message: "Deleted notes will appear here. You can restore or permanently delete them.",
+          icon: Trash2,
+          tips: [
+            "Deleted notes are kept for 30 days",
+            "You can restore notes back to your collection",
+            "Empty trash to free up space"
+          ]
+        };
+        
       default:
         return {
-          title: "No notes yet",
-          message: "Create your first note to get started.",
-          icon: (
-            <svg className="w-16 h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
-            </svg>
-          ),
-        }
+          title: "Let's create your first note",
+          message: "Start capturing your thoughts, ideas, and important information.",
+          icon: Sparkles,
+          showCreateButton: true,
+          tips: [
+            "Use tags to organize your notes",
+            "Star important notes for quick access",
+            "Try the mind map tool for visual thinking"
+          ]
+        };
     }
-  }
+  };
 
-  const { title, message, icon } = getEmptyMessage()
+  const content = getEmptyContent();
+  const Icon = content.icon;
 
   return (
-    <div className="flex-1 flex items-center justify-center p-8">
-      <div className="text-center animate-fade-in">
-        <div className="mb-6">{icon}</div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">{title}</h3>
-        <p className="text-gray-600 max-w-md">{message}</p>
+    <div className="flex-1 flex items-center justify-center p-8 min-h-[60vh]">
+      <div className="text-center max-w-md mx-auto animate-fade-in-up">
+        {/* Icon */}
+        <div className="mb-8 relative">
+          <div className="w-32 h-32 bg-muted rounded-full mx-auto flex items-center justify-center relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <Icon className="w-16 h-16 text-muted-foreground relative z-10 group-hover:scale-110 transition-transform duration-300" />
+          </div>
+          <div className="absolute -inset-4 bg-primary/5 blur-2xl rounded-full animate-pulse"></div>
+        </div>
+
+        {/* Text Content */}
+        <h3 className="text-2xl font-bold text-foreground mb-3">{content.title}</h3>
+        <p className="text-muted-foreground mb-8 leading-relaxed">{content.message}</p>
+
+        {/* Action Button */}
+        {content.showCreateButton && (
+          <button
+            className="btn-primary px-6 py-3 mx-auto flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <Plus className="w-5 h-5" />
+            Create your first note
+          </button>
+        )}
+
+        {content.action && (
+          <button
+            onClick={content.action.onClick}
+            className="btn-secondary px-6 py-3 mx-auto"
+          >
+            {content.action.text}
+          </button>
+        )}
+
+        {/* Tips */}
+        {content.tips && (
+          <div className="mt-12 p-6 bg-muted/50 rounded-2xl border border-border/50">
+            <h4 className="text-sm font-semibold text-foreground mb-4">Quick Tips</h4>
+            <ul className="space-y-2 text-left">
+              {content.tips.map((tip, index) => (
+                <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <span className="text-primary mt-0.5">•</span>
+                  <span>{tip}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default EmptyState
+export default EmptyState;

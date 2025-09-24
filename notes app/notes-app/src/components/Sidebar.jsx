@@ -15,99 +15,32 @@ import {
   Timer,
   BookOpenText,
   Bookmark,
-  ChevronDown,
-  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  Hash,
+  TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
+import SettingsModal from './SettingsModal';
 
 const Sidebar = ({
   currentView,
   onViewChange,
   onCreateNote,
-  onLogin,
-  onSignup,
   theme,
-  toggleTheme,
   onShowMindMap,
   smartCollections,
+  toggleTheme,
   onSmartCollectionChange,
   activeSmartCollection,
   onShowPomodoro,
-  onShowDailyPrompt
+  onShowDailyPrompt,
+  collapsed,
+  onToggleCollapse,
 }) => {
   const [showSmartCollections, setShowSmartCollections] = useState(false);
-
-  // Updated color definitions to match App.js themes
-  const colors = {
-    light: {
-      background: "bg-amber-50",
-      card: "bg-white",
-      border: "border-amber-200",
-      primary: "text-amber-900",
-      secondary: "text-amber-700",
-      muted: "text-amber-600",
-      accent: "bg-amber-100",
-      accentForeground: "text-amber-900",
-      hover: "bg-amber-100",
-      active: "bg-amber-500",
-      activeText: "text-white"
-    },
-    dark: {
-      background: "bg-gray-900",
-      card: "bg-gray-800",
-      border: "border-gray-700",
-      primary: "text-gray-100",
-      secondary: "text-gray-300",
-      muted: "text-gray-400",
-      accent: "bg-blue-900",
-      accentForeground: "text-blue-100",
-      hover: "bg-gray-700",
-      active: "bg-blue-600",
-      activeText: "text-white"
-    },
-    blueLight: {
-      background: "bg-blue-50",
-      card: "bg-white",
-      border: "border-blue-200",
-      primary: "text-blue-900",
-      secondary: "text-blue-700",
-      muted: "text-blue-600",
-      accent: "bg-blue-100",
-      accentForeground: "text-blue-900",
-      hover: "bg-blue-100",
-      active: "bg-blue-500",
-      activeText: "text-white"
-    },
-    greenLight: {
-      background: "bg-emerald-50",
-      card: "bg-white",
-      border: "border-emerald-200",
-      primary: "text-emerald-900",
-      secondary: "text-emerald-700",
-      muted: "text-emerald-600",
-      accent: "bg-emerald-100",
-      accentForeground: "text-emerald-900",
-      hover: "bg-emerald-100",
-      active: "bg-emerald-500",
-      activeText: "text-white"
-    },
-    sepia: {
-      background: "bg-amber-50",
-      card: "bg-amber-100",
-      border: "border-amber-200",
-      primary: "text-amber-900",
-      secondary: "text-amber-800",
-      muted: "text-amber-700",
-      accent: "bg-amber-200",
-      accentForeground: "text-amber-900",
-      hover: "bg-amber-200",
-      active: "bg-amber-600",
-      activeText: "text-white"
-    }
-  };
-
-  // Safe access to colors with fallback
-  const currentColors = colors[theme] || colors.light;
+  const [showSettings, setShowSettings] = useState(false);
 
   const SidebarButton = ({
     icon,
@@ -115,28 +48,38 @@ const Sidebar = ({
     onClick,
     isActive,
     isSecondary = false,
+    badge = null,
   }) => (
     <button
       onClick={onClick}
-      className={`flex items-center w-full px-4 py-3 rounded-xl transition-all duration-200 ease-in-out font-medium group
+      className={`sidebar-btn flex items-center w-full rounded-xl transition-all duration-200 ease-in-out font-medium group relative overflow-hidden
+        ${collapsed ? 'px-3 py-3 justify-center' : 'px-4 py-3'}
         ${
           isActive
-            ? `${currentColors.accent} ${currentColors.accentForeground} shadow-md`
-            : `${currentColors.muted} hover:${currentColors.hover}`
+            ? "bg-primary text-primary-foreground shadow-md before:absolute before:inset-0 before:bg-white/10"
+            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
         }
         ${isSecondary ? "text-sm" : ""}`}
+      title={collapsed ? label : ""}
     >
       <div
-        className={`w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-200 mr-4
-          ${
-            isActive
-              ? `${currentColors.active} ${currentColors.activeText}`
-              : `bg-opacity-50 ${currentColors.hover} ${currentColors.muted} group-hover:${currentColors.accent} group-hover:${currentColors.accentForeground}`
-          }`}
+        className={`flex items-center justify-center flex-shrink-0 transition-all duration-200
+          ${collapsed ? "" : "mr-3"}`}
       >
-        {icon}
+        {React.cloneElement(icon, { 
+          className: `${collapsed ? 'w-5 h-5' : 'w-5 h-5'} transition-all duration-200` 
+        })}
       </div>
-      <span className="flex-1 text-left">{label}</span>
+      {!collapsed && (
+        <>
+          <span className="flex-1 text-left truncate">{label}</span>
+          {badge && (
+            <span className="ml-2 bg-primary/20 text-primary text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0">
+              {badge}
+            </span>
+          )}
+        </>
+      )}
     </button>
   );
 
@@ -145,46 +88,87 @@ const Sidebar = ({
     return (
       <button
         onClick={() => onSmartCollectionChange(collection.id)}
-        className={`flex items-center w-full py-2 px-4 rounded-xl transition-colors duration-200 font-normal hover:${currentColors.hover} text-left
-        ${isActive ? `${currentColors.hover} ${currentColors.primary} font-semibold` : currentColors.muted}`}
+        className={`flex items-center w-full rounded-lg transition-all duration-200 text-sm text-left
+        ${collapsed ? 'px-3 py-2.5 justify-center' : 'py-2.5 px-4'}
+        ${isActive 
+          ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold" 
+          : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+        }`}
+        title={collapsed ? collection.label : ""}
       >
-        <Bookmark className="w-4 h-4 mr-3" />
-        <span>{collection.label}</span>
+        <Bookmark className={`w-4 h-4 flex-shrink-0 ${collapsed ? '' : 'mr-3'}`} />
+        {!collapsed && <span className="truncate">{collection.label}</span>}
       </button>
     );
   };
 
-  // Get appropriate theme icon
-  const getThemeIcon = () => {
-    switch (theme) {
-      case 'dark': return <Sun size={20} />;
-      case 'blueLight': return <Palette size={20} />;
-      case 'greenLight': return <Palette size={20} />;
-      case 'sepia': return <Palette size={20} />;
-      default: return <Moon size={20} />;
-    }
-  };
-
   return (
-    <aside className={`w-72 ${currentColors.card} border-r ${currentColors.border} flex flex-col transition-colors duration-300 h-full`}>
-      {/* Fixed header section */}
-      <div className={`p-6 flex-shrink-0 border-b ${currentColors.border}`}>
-        <div className="flex items-center justify-between">
-          <h1 className={`text-2xl font-bold font-heading ${currentColors.primary}`}>Notes.</h1>
+    <aside 
+      className={`
+        ${collapsed ? 'w-[5.9rem]' : 'w-80'} 
+        bg-sidebar 
+        border-r border-sidebar-border 
+        flex flex-col 
+        transition-all duration-300 ease-in-out 
+        relative z-10
+        shadow-lg
+      `}
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-sidebar via-sidebar to-sidebar/95 pointer-events-none" />
+      
+      <div className="relative z-10 p-6 flex flex-col h-full">
+        {/* Header */}
+        <div className={`flex items-center mb-8 ${collapsed ? 'justify-center' : 'justify-between'}`}>
+          {!collapsed && (
+            <div className="animate-fade-in-up">
+              <h2 className="text-lg font-semibold text-sidebar-foreground mb-1">Workspace</h2>
+              <p className="text-xs text-sidebar-foreground/60">Organize your thoughts</p>
+            </div>
+          )}
           <button
-            onClick={onCreateNote}
-            className={`p-2 rounded-lg ${currentColors.hover} ${currentColors.primary} hover:${currentColors.accent} hover:${currentColors.accentForeground} transition-colors`}
-            title="Create New Note"
+            onClick={onToggleCollapse}
+            className={`
+              p-2 rounded-lg 
+              hover:bg-sidebar-accent 
+              text-sidebar-foreground 
+              transition-all duration-200
+              ${collapsed ? 'mx-auto' : 'ml-auto'}
+            `}
+            aria-label="Toggle sidebar"
           >
-            <Plus className="w-5 h-5" />
+            {collapsed ? 
+              <ChevronRight className="w-5 h-5" /> : 
+              <ChevronLeft className="w-5 h-5" />
+            }
           </button>
         </div>
-      </div>
 
-      {/* Scrollable navigation section */}
-      <div className="flex-1 overflow-auto">
-        <div className="p-6 pb-4">
-          <nav className="space-y-2">
+        {/* Main Navigation */}
+        <nav className="space-y-2 flex-1 overflow-y-auto custom-scrollbar">
+          {/* Create Button */}
+          <div className="mb-6">
+            <button
+              onClick={onCreateNote}
+              className={`
+                w-full btn-primary 
+                flex items-center justify-center gap-2 
+                py-3 shadow-md hover:shadow-lg 
+                transition-all duration-200
+                ${collapsed ? 'px-3' : 'px-4'}
+              `}
+            >
+              <Plus className="w-5 h-5 flex-shrink-0" />
+              {!collapsed && <span>Create New Note</span>}
+            </button>
+          </div>
+
+          {/* Navigation Section */}
+          <div className="space-y-1">
+            {!collapsed && (
+              <p className="text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider px-4 mb-2">
+                Navigation
+              </p>
+            )}
             <SidebarButton
               icon={<LayoutGrid />}
               label="All Notes"
@@ -203,39 +187,56 @@ const Sidebar = ({
               onClick={() => onViewChange("deleted")}
               isActive={currentView === "deleted"}
             />
-            
-            {/* Smart Collections with toggle */}
-            <div className="space-y-2">
-              <button
-                onClick={() => setShowSmartCollections(!showSmartCollections)}
-                className={`flex items-center w-full px-4 py-3 rounded-xl transition-colors duration-200 ease-in-out font-medium ${currentColors.muted} hover:${currentColors.hover}`}
-              >
-                <div className={`w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-200 mr-4 ${currentColors.hover} ${currentColors.muted}`}>
-                  <Bookmark className="w-5 h-5" />
-                </div>
-                <span className="flex-1 text-left">Smart Collections</span>
-                {showSmartCollections ? (
-                  <ChevronUp className="w-4 h-4" />
-                ) : (
-                  <ChevronDown className="w-4 h-4" />
-                )}
-              </button>
-              
-              {showSmartCollections && (
-                <div className="pl-4 space-y-1 animate-fade-in">
-                  {smartCollections.map((collection) => (
-                    <SmartCollectionButton
-                      key={collection.id}
-                      collection={collection}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </nav>
+          </div>
 
-          {/* Tools section */}
-          <div className="space-y-2 mt-6">
+          {/* Collections Section */}
+          <div className="pt-6 space-y-1">
+            {!collapsed && (
+              <p className="text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider px-4 mb-2">
+                Collections
+              </p>
+            )}
+            <button
+              onClick={() => !collapsed && setShowSmartCollections(!showSmartCollections)}
+              className={`
+                flex items-center w-full rounded-xl 
+                transition-all duration-200 ease-in-out 
+                font-medium text-sidebar-foreground/70 
+                hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground
+                ${collapsed ? 'px-3 py-3 justify-center' : 'px-4 py-3'}
+              `}
+            >
+              <Bookmark className={`w-5 h-5 flex-shrink-0 ${collapsed ? '' : 'mr-3'}`} />
+              {!collapsed && (
+                <>
+                  <span className="flex-1 text-left">Smart Collections</span>
+                  <ChevronRight
+                    className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
+                      showSmartCollections ? "rotate-90" : ""
+                    }`}
+                  />
+                </>
+              )}
+            </button>
+            {showSmartCollections && !collapsed && (
+              <div className="pl-4 pr-2 space-y-0.5 mt-1 animate-fade-in-up">
+                {smartCollections.map((collection) => (
+                  <SmartCollectionButton
+                    key={collection.id}
+                    collection={collection}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Tools Section */}
+          <div className="pt-6 space-y-1">
+            {!collapsed && (
+              <p className="text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider px-4 mb-2">
+                Tools
+              </p>
+            )}
             <SidebarButton
               icon={<BookOpenText />}
               label="Daily Prompt"
@@ -255,41 +256,25 @@ const Sidebar = ({
               isSecondary
             />
           </div>
-        </div>
-      </div>
+        </nav>
 
-      {/* Fixed footer section */}
-      <div className={`flex-shrink-0 border-t ${currentColors.border}`}>
-        <div className="p-6 space-y-4">
-          <div className="flex items-center justify-between px-2">
-            <span className={`text-sm font-semibold ${currentColors.muted}`}>
-              Theme
-            </span>
-            <button
-              onClick={toggleTheme}
-              className={`p-2 rounded-full hover:${currentColors.hover} transition-colors ${currentColors.primary}`}
-              title={`Current: ${theme}`}
-            >
-              {getThemeIcon()}
-            </button>
-          </div>
-          
-          <div className="space-y-1">
-            <SidebarButton
-              icon={<Plus />}
-              label="Login"
-              onClick={onLogin}
-              isSecondary
-            />
-            <SidebarButton
-              icon={<Palette />}
-              label="Signup"
-              onClick={onSignup}
-              isSecondary
-            />
-          </div>
+        {/* Footer */}
+        <div className="pt-6 mt-auto space-y-1 border-t border-sidebar-border">
+          <SidebarButton
+  icon={<Settings />}
+  label="Settings"
+  onClick={() => setShowSettings(true)}
+  isSecondary
+/>
         </div>
       </div>
+      {showSettings && (
+  <SettingsModal
+    onClose={() => setShowSettings(false)}
+    theme={theme}
+    toggleTheme={toggleTheme}
+  />
+)}
     </aside>
   );
 };
